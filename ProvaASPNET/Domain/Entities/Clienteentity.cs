@@ -24,5 +24,11 @@ namespace Domain.Entities
             Cpf = cpf;
             DataNascimento = dataNascimento;
         }
+
+        public void Update(string nome, DateTime dataNascimento)
+        {
+            Nome = nome;
+            DataNascimento = dataNascimento;
+        }
     }
 }

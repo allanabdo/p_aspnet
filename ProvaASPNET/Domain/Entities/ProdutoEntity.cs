@@ -24,5 +24,11 @@ namespace Domain.Entities
             Descricao = descricao;
             ValorVenda = valorVenda;
         }
+
+        public void Update(string descricao, double valorVenda)
+        {
+            Descricao = descricao;
+            ValorVenda = valorVenda;
+        }
     }
 }

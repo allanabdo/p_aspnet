@@ -18,6 +18,11 @@ namespace Site
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+               name: "API",
+               url: "api/{controller}/{action}/{id}"
+           );
         }
     }
 }
