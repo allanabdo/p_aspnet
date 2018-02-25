@@ -1,0 +1,63 @@
+﻿@{
+    Layout = null;
+    ViewBag.Titulo = "Pesquisa de cliente";
+}
+
+
+<div ng-controller="clienteController" ng-init="InitList()">
+    <div class="titulo">
+        <div class="container">
+            <p>Pesquisa de cliente</p>
+        </div>
+    </div>
+    <div class="container margin-top-40">
+        <div class="pesquisa">
+            <div class="row">
+                <div class="col">
+                    <form>
+                        <div class="form-group">
+                            <label>Código</label>
+                            <input type="text" class="form-control" ng-model="ClientePesquisa.Codigo" placeholder="Digite o código">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome</label>
+                            <input type="text" class="form-control" ng-model="ClientePesquisa.Nome" placeholder="Digite o nome">
+                        </div>
+                        <div class="form-group">
+                            <label>CPF</label>
+                            <input type="text" class="form-control" ng-model="ClientePesquisa.Cpf" placeholder="Digite o cpf">
+                        </div>
+                        <button class="btn float-right" ng-click="Pesquisar()">Pesquisar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row margin-top-20">
+            <div class="col"><a class="novo_registro" href="#!/clientes/cadastrar"><i class="fas fa-plus-square"></i> Adicionar novo cliente</a></div>
+        </div>
+        <table class="table table-responsive-xl margin-top-20">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Data de nascimento</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr ng-repeat="item in Lista">
+                    <td>{{item.Codigo}}</td>
+                    <td>{{item.Nome}}</td>
+                    <td class="cpf_text">{{item.Cpf}}</td>
+                    <td>{{item.DataNascimento}}</td>
+                    <td><a href="#!/clientes/alterar/{{item.Id}}"><i class="fas fa-edit"></i></a></td>
+                    <td><a ng-click="excluir(item.Id)"><i class="fas fa-trash-alt"></i></a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -20,8 +20,24 @@ namespace Site
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/angular").Include(
+                "~/Scripts/angular.min.js",
+                "~/Scripts/angular-route.min.js"
+            ));
+
+            bundles.Add(new ScriptBundle("~/bundles/script").Include(
+                "~/Scripts/toastmessage/js/jquery.toastmessage.js",
+                "~/Scripts/linq-vsdoc.js",
+                "~/Scripts/linq.min.js",
+                "~/Scripts/moment.min.js",
+                "~/Scripts/jquery.mask.js",
+                "~/Content/js/app.js",
+                "~/Content/js/controllers.js"
+            ));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Scripts/toastmessage/rsc/css/jquery.toastmessage.css",
                       "~/Content/site.css"));
         }
     }

@@ -3,9 +3,8 @@ using Domain.EntityFramework.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Domain.Services
@@ -28,10 +27,12 @@ namespace Domain.Services
             var entity = await _produtoRepository.GetByIdAsync(id);
             if (entity != null)
             {
-                var result = new DefaultResult<ProdutoModel>(ProdutoModel.FromEntity(entity), true);
+                var result = new DefaultResult<ProdutoModel>(ProdutoModel.FromEntity(entity), HttpStatusCode.OK);
                 return result;
             }
-            return null;
+            return new DefaultResult<ProdutoModel>(null, HttpStatusCode.NotFound); 
+
+
         }
 
         public async Task<DefaultResult<bool>> Cadastrar(ProdutoModel model)
@@ -42,22 +43,22 @@ namespace Domain.Services
                 //verificar se codigo existe
                 if (_produtoRepository.CodigoExiste(model.Codigo))
                 {
-                    return new DefaultResult<bool>(false, false, "Código já existe");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Código já existe");
                 }
 
                 //verificar se codigo de barras existe
                 if (_produtoRepository.CodigoBarraExiste(model.CodigoBarra))
                 {
-                    return new DefaultResult<bool>(false, false, "Código de barras já existe");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Código de barras já existe");
                 }
 
                 var entity = new ProdutoEntity(model.Codigo, model.CodigoBarra, model.Descricao, model.ValorVenda);
                 await _produtoRepository.InsertAsync(entity);
-                return new DefaultResult<bool>(true, true);
+                return new DefaultResult<bool>(true, HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
-                return new DefaultResult<bool>(false, false, ex.Message);
+                return new DefaultResult<bool>(false, HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -73,17 +74,17 @@ namespace Domain.Services
                     entity.Update(model.Descricao, model.ValorVenda);
 
                     await _produtoRepository.UpdateAsync(entity);
-                    return new DefaultResult<bool>(true, true);
+                    return new DefaultResult<bool>(true, HttpStatusCode.OK);
                 }
                 else
                 {
-                    return new DefaultResult<bool>(false, false, "Produto não encontrado");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Produto não encontrado");
                 }
 
             }
             catch (Exception ex)
             {
-                return new DefaultResult<bool>(false, false, ex.Message);
+                return new DefaultResult<bool>(false, HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -96,16 +97,16 @@ namespace Domain.Services
                 //verificar se produto está em algum pedido
                 if (_pedidoRepository.ProdutoTotalPedidos(id) > 0)
                 {
-                    return new DefaultResult<bool>(false, false, "Produto está em algum pedido e não pode ser excluido");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Produto está em algum pedido e não pode ser excluido");
                 }
 
                 //excluir
                 await _produtoRepository.DeleteAsync(entity);
-                return new DefaultResult<bool>(true, true);
+                return new DefaultResult<bool>(true, HttpStatusCode.OK);
             }
             else
             {
-                return new DefaultResult<bool>(false, false, "Produto não encontrado");
+                return new DefaultResult<bool>(false, HttpStatusCode.NotFound, "Produto não encontrado");
             }
         }
 
@@ -116,11 +117,24 @@ namespace Domain.Services
             if (total > 0)
             {
                 var result = _produtoRepository.Lista(porpagina, (porpagina * pagina - porpagina), codigo);
-                return new DefaultResult<PageResult<ProdutoModel>>(new PageResult<ProdutoModel>(result.Select(x => ProdutoModel.FromEntity(x)).ToList(), total, pagina), true);
+                return new DefaultResult<PageResult<ProdutoModel>>(new PageResult<ProdutoModel>(result.Select(x => ProdutoModel.FromEntity(x)).ToList(), total, pagina), HttpStatusCode.OK);
             }
             else
             {
-                return new DefaultResult<PageResult<ProdutoModel>>(null, false, "Não possui registros");
+                return new DefaultResult<PageResult<ProdutoModel>>(null, HttpStatusCode.NotFound, "Não possui registros");
+            }
+        }
+
+        public DefaultResult<ProdutoModel> GetByCodigoBarra(string codigoBarra)
+        {
+            try
+            {
+                var entity = _produtoRepository.GetByCodigoBarras(codigoBarra);
+                return new DefaultResult<ProdutoModel>(ProdutoModel.FromEntity(entity), HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return new DefaultResult<ProdutoModel>(null, HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }

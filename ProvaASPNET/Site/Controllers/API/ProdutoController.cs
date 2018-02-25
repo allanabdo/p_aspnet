@@ -2,6 +2,8 @@
 using Domain.Models;
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -23,11 +25,12 @@ namespace Site.Controllers.API
         public async Task<IHttpActionResult> Get([FromUri] Guid id)
         {
             var result = await _produtoService.Get(id);
-            if (result != null)
+            if (result.Status == HttpStatusCode.OK)
             {
                 return Ok(result);
             }
-            return BadRequest();
+
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
         }
 
         [HttpPost]
@@ -37,18 +40,15 @@ namespace Site.Controllers.API
             if (ModelState.IsValid)
             {
                 var result = await _produtoService.Cadastrar(model);
-                if (result.Sucesso)
+                if (result.Status == HttpStatusCode.Created)
                 {
                     return Ok();
                 }
-                else
-                {
-                    return BadRequest(result.Mensagem);
-                }
+                return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
             }
             else
             {
-                var erro = ModelState.Values.FirstOrDefault().Errors.FirstOrDefault().ErrorMessage;
+                var erro = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0)?.Errors.FirstOrDefault()?.ErrorMessage;
                 return BadRequest(erro);
             }
         }
@@ -60,18 +60,15 @@ namespace Site.Controllers.API
             if (ModelState.IsValid)
             {
                 var result = await _produtoService.Alterar(id, model);
-                if (result.Sucesso)
+                if (result.Status == HttpStatusCode.OK)
                 {
                     return Ok();
                 }
-                else
-                {
-                    return BadRequest(result.Mensagem);
-                }
+                return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
             }
             else
             {
-                var erro = ModelState.Values.FirstOrDefault().Errors.FirstOrDefault().ErrorMessage;
+                var erro = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0)?.Errors.FirstOrDefault()?.ErrorMessage;
                 return BadRequest(erro);
             }
         }
@@ -82,14 +79,11 @@ namespace Site.Controllers.API
         {
 
             var result = await _produtoService.Excluir(id);
-            if (result.Sucesso)
+            if (result.Status == HttpStatusCode.OK)
             {
                 return Ok();
             }
-            else
-            {
-                return BadRequest(result.Mensagem);
-            }
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
         }
 
 
@@ -103,15 +97,23 @@ namespace Site.Controllers.API
             }
 
             var result = _produtoService.Listar(pagina, porpagina, codigo);
-            if (result.Sucesso)
+            if (result.Status == HttpStatusCode.OK)
             {
                 return Ok(result.Dados);
             }
-            else
-            {
-                return BadRequest(result.Mensagem);
-            }
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
         }
 
+        [HttpGet]
+        [Route("codigobarra/{codigobarra}")]
+        public IHttpActionResult GetByCodigoBarra([FromUri] string codigobarra)
+        {
+            var result = _produtoService.GetByCodigoBarra(codigobarra);
+            if (result.Status == HttpStatusCode.OK)
+            {
+                return Ok(result);
+            }
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
+        }
     }
 }

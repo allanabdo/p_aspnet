@@ -10,10 +10,11 @@ namespace Domain.Unity
     {
         public static UnityContainer Configure(UnityContainer container, PerThreadLifetimeManager lifetime)
         {
-            container.RegisterType<AppContextProvaASPNET>(lifetime);
+            container.RegisterType<AppContextProvaASPNET>(new ContainerControlledLifetimeManager());
             
             container.RegisterType<IClienteService, ClienteService>();
             container.RegisterType<IProdutoService, ProdutoService>();
+            container.RegisterType<IPedidoService, PedidoService>();
 
             return container;
         }

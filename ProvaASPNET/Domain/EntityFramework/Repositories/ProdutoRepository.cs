@@ -52,5 +52,11 @@ namespace Domain.EntityFramework.Repositories
 
             return query.Count();
         }
+
+        public ProdutoEntity GetByCodigoBarras(string codigoBarra)
+        {
+            var result = AsQueryable.FirstOrDefault(x => x.CodigoBarra == codigoBarra);
+            return result;
+        }
     }
 }

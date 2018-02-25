@@ -28,6 +28,13 @@ namespace Domain.Entities
             ValorTotal = valorTotal;
         }
 
+        public void AddProduto(Guid id)
+        {
+            var produto = new ProdutoEntity();
+            produto.SetId(id);
+            Produtos.Add(produto);
+        }
+
 
     }
 }

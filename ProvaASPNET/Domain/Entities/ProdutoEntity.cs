@@ -4,7 +4,7 @@ namespace Domain.Entities
 {
     public class ProdutoEntity
     {
-        public Guid Id { get;  protected set; }
+        public Guid Id { get; protected set; }
         public string Codigo { get; protected set; }
         public string CodigoBarra { get; protected set; }
         public string Descricao { get; protected set; }
@@ -30,5 +30,11 @@ namespace Domain.Entities
             Descricao = descricao;
             ValorVenda = valorVenda;
         }
+
+        public void SetId(Guid id)
+        {
+            Id = id;
+        }
+
     }
 }

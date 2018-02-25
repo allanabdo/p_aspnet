@@ -2,6 +2,8 @@
 using Domain.Models;
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -22,11 +24,11 @@ namespace Site.Controllers.API
         public async Task<IHttpActionResult> Get([FromUri] Guid id)
         {
             var result = await _clienteService.Get(id);
-            if (result != null)
+            if (result.Status == HttpStatusCode.OK)
             {
                 return Ok(result);
             }
-            return BadRequest();
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
         }
 
         [HttpPost]
@@ -36,18 +38,18 @@ namespace Site.Controllers.API
             if (ModelState.IsValid)
             {
                 var result = await _clienteService.Cadastrar(model);
-                if (result.Sucesso)
+                if (result.Status == HttpStatusCode.Created)
                 {
                     return Ok();
                 }
                 else
                 {
-                    return BadRequest(result.Mensagem);
+                    return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
                 }
             }
             else
             {
-                var erro = ModelState.Values.FirstOrDefault().Errors.FirstOrDefault().ErrorMessage;
+                var erro = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0)?.Errors.FirstOrDefault()?.ErrorMessage;
                 return BadRequest(erro);
             }
         }
@@ -59,18 +61,15 @@ namespace Site.Controllers.API
             if (ModelState.IsValid)
             {
                 var result = await _clienteService.Alterar(id, model);
-                if (result.Sucesso)
+                if (result.Status == HttpStatusCode.OK)
                 {
                     return Ok();
                 }
-                else
-                {
-                    return BadRequest(result.Mensagem);
-                }
+                return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
             }
             else
             {
-                var erro = ModelState.Values.FirstOrDefault().Errors.FirstOrDefault().ErrorMessage;
+                var erro = ModelState.Values.FirstOrDefault(x => x.Errors.Count > 0)?.Errors.FirstOrDefault()?.ErrorMessage;
                 return BadRequest(erro);
             }
         }
@@ -81,14 +80,11 @@ namespace Site.Controllers.API
         {
 
             var result = await _clienteService.Excluir(id);
-            if (result.Sucesso)
+            if (result.Status == HttpStatusCode.OK)
             {
                 return Ok();
             }
-            else
-            {
-                return BadRequest(result.Mensagem);
-            }
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
         }
 
 
@@ -102,14 +98,13 @@ namespace Site.Controllers.API
             }
             var pesquisa = new ClientePesquisaModel { Codigo = codigo, Nome = nome, Cpf = cpf };
             var result = _clienteService.Listar(pagina, porpagina, pesquisa);
-            if (result.Sucesso)
+            if (result.Status == HttpStatusCode.OK)
             {
                 return Ok(result.Dados);
             }
-            else
-            {
-                return BadRequest(result.Mensagem);
-            }
+
+            return ResponseMessage(Request.CreateErrorResponse(result.Status, result.Mensagem));
+
         }
     }
 }

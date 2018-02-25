@@ -1,17 +1,27 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+﻿/*UTILS*/
+
+.margin-top-40 {
+    margin-top: 40px;
 }
 
-/* Set padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+.margin-top-20 {
+    margin-top: 20px;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+.novo_registro {
+    float: right;
+    font-size: 22px;
+    cursor: pointer;
 }
+
+.titulo {
+    font-size: 28px;
+    background: #dadada;
+    padding: 11px 0;
+}
+
+    .titulo p {
+        padding: 0;
+        margin: 0;
+        color: #737171;
+    }

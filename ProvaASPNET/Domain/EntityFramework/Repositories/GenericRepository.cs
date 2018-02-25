@@ -28,6 +28,11 @@ namespace Domain.EntityFramework
         {
             if (entity != null)
             {
+                if (Context.Entry(entity).State == EntityState.Detached)
+                {
+                    Context.Set<T>().Attach(entity);
+                }
+
                 Context.Entry(entity).State = EntityState.Modified;
                 await Context.SaveChangesAsync();
             }
@@ -35,6 +40,10 @@ namespace Domain.EntityFramework
 
         public async Task InsertAsync(T entity)
         {
+            if (Context.Entry(entity).State == EntityState.Detached)
+            {
+                Context.Set<T>().Attach(entity);
+            }
             Context.Set<T>().Add(entity);
             await Context.SaveChangesAsync();
 

@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+
+
+<div ng-controller="produtoController" ng-init="InitList()">
+    <div class="titulo">
+        <div class="container">
+            <p>Pesquisa de produto</p>
+        </div>
+    </div>
+    <div class="container margin-top-40">
+        <div class="pesquisa">
+            <div class="row">
+                <div class="col">
+                    <form>
+                        <div class="form-group">
+                            <label>Código</label>
+                            <input type="text" class="form-control" ng-model="ProdutoPesquisa.Codigo" placeholder="Digite o código">
+                        </div>
+                        <button class="btn float-right" ng-click="Pesquisar()">Pesquisar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row margin-top-20">
+            <div class="col"><a class="novo_registro" href="#!/produtos/cadastrar"><i class="fas fa-plus-square"></i> Adicionar novo produto</a></div>
+        </div>
+        <table class="table table-responsive-xl margin-top-20">
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Valor de venda</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="item in Lista">
+                <td>{{item.Codigo}}</td>
+                <td>{{item.Descricao}}</td>
+                <td>{{item.ValorVenda}}</td>
+                <td><a href="#!/produtos/alterar/{{item.Id}}"><i class="fas fa-edit"></i></a></td>
+                <td><a ng-click="excluir(item.Id)"><i class="fas fa-trash-alt"></i></a></td>
+            </tr>
+            </tbody>
+        </table>
+        
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+            <ul class="pagination">
+                <li class="page-item" ng-repeat="number in TotalPaginas">
+                    <a class="page-link" href="#!/produtos/?pagina={{number}}">{{number}}</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

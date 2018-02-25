@@ -1,14 +1,17 @@
-﻿using System.Threading.Tasks;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace Site.Controllers
 {
     public class HomeController : Controller
     {
-
-        public async Task<ActionResult> Index()
+        // GET: Home
+        public ActionResult Index()
         {
+            return View();
+        }
 
+        public ActionResult Home()
+        {
             return View();
         }
     }

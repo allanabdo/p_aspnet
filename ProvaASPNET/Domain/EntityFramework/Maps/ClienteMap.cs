@@ -22,7 +22,7 @@ namespace Domain.EntityFramework.Maps
             new IndexAnnotation(new IndexAttribute("IX_codigoCli") { IsUnique = true })); 
 
             Property(x => x.Nome).HasColumnName("nome").HasMaxLength(200).IsRequired();
-            Property(x => x.Cpf).HasColumnName("cpf").HasMaxLength(11).IsRequired()
+            Property(x => x.Cpf).HasColumnName("cpf").HasMaxLength(14).IsRequired()
             .HasColumnAnnotation(
             "Index",
             new IndexAnnotation(new IndexAttribute("IX_cpfCli") { IsUnique = true }));

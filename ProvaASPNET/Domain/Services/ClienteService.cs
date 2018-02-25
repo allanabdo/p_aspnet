@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.EntityFramework.Repositories;
@@ -25,42 +25,50 @@ namespace Domain.Services
             var entity = await _clienteRepository.GetByIdAsync(id);
             if (entity != null)
             {
-                var result = new DefaultResult<ClienteModel>(ClienteModel.FromEntity(entity), true);
+                var result = new DefaultResult<ClienteModel>(ClienteModel.FromEntity(entity), HttpStatusCode.OK);
                 return result;
             }
-            return null;
+            return new DefaultResult<ClienteModel>(null, HttpStatusCode.NotFound);
         }
 
         public async Task<DefaultResult<bool>> Cadastrar(ClienteModel model)
         {
             try
             {
+    
+                DateTime dataNascimento;
+
+                if (!DateTime.TryParse(model.DataNascimento, out dataNascimento))
+                {
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Data inválida");
+                }
+
                 //verificar se cpf já esta cadastrado
                 if (_clienteRepository.CpfExiste(model.Cpf))
                 {
-                    return new DefaultResult<bool>(false, false, "CPF já existe");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "CPF já existe");
                 }
 
                 //verificar se codigo ja esta cadastrado
                 if (_clienteRepository.CodigoExiste(model.Codigo))
                 {
-                    return new DefaultResult<bool>(false, false, "Código já existe");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Código já existe");
                 }
 
                 //verificar idaide - n permitir menores de 18 anos
-                if (model.DataNascimento.AddYears(18) > DateTime.Now)
+                if (dataNascimento.AddYears(18) > DateTime.Now)
                 {
-                    return new DefaultResult<bool>(false, false, "São permitidos apenas clientes maiores de 18 anos.");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "São permitidos apenas clientes maiores de 18 anos.");
                 }
 
 
-                var entity = new ClienteEntity(model.Codigo, model.Nome, model.Cpf, model.DataNascimento);
+                var entity = new ClienteEntity(model.Codigo, model.Nome, model.Cpf, dataNascimento);
                 await _clienteRepository.InsertAsync(entity);
-                return new DefaultResult<bool>(true, true);
+                return new DefaultResult<bool>(true, HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
-                return new DefaultResult<bool>(false, false, ex.Message);
+                return new DefaultResult<bool>(false, HttpStatusCode.InternalServerError, ex.Message);
             }
 
         }
@@ -69,10 +77,17 @@ namespace Domain.Services
         {
             try
             {
-                //verificar idaide - n permitir menores de 18 anos
-                if (model.DataNascimento.AddYears(18) > DateTime.Now)
+                DateTime dataNascimento;
+
+                if (!DateTime.TryParse(model.DataNascimento, out dataNascimento))
                 {
-                    return new DefaultResult<bool>(false, false, "São permitidos apenas clientes maiores de 18 anos.");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Data inválida");
+                }
+
+                //verificar idaide - n permitir menores de 18 anos
+                if (dataNascimento.AddYears(18) > DateTime.Now)
+                {
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "São permitidos apenas clientes maiores de 18 anos.");
                 }
 
                 //procurar cliente pelo id
@@ -80,20 +95,20 @@ namespace Domain.Services
                 if (entity != null)
                 {
                     //atualizar os dados
-                    entity.Update(model.Nome, model.DataNascimento);
+                    entity.Update(model.Nome, dataNascimento);
 
                     await _clienteRepository.UpdateAsync(entity);
-                    return new DefaultResult<bool>(true, true);
+                    return new DefaultResult<bool>(true, HttpStatusCode.OK);
                 }
                 else
                 {
-                    return new DefaultResult<bool>(false, false, "Cliente não encontrado");
+                    return new DefaultResult<bool>(false, HttpStatusCode.NotFound, "Cliente não encontrado");
                 }
 
             }
             catch (Exception ex)
             {
-                return new DefaultResult<bool>(false, false, ex.Message);
+                return new DefaultResult<bool>(false, HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -103,11 +118,11 @@ namespace Domain.Services
             if (total > 0)
             {
                 var result = _clienteRepository.Lista(porpagina, (porpagina * pagina - porpagina), pesquisa);
-                return new DefaultResult<PageResult<ClienteModel>>(new PageResult<ClienteModel>(result.Select(x => ClienteModel.FromEntity(x)).ToList(), total, pagina), true);
+                return new DefaultResult<PageResult<ClienteModel>>(new PageResult<ClienteModel>(result.Select(x => ClienteModel.FromEntity(x)).ToList(), total, pagina), HttpStatusCode.OK);
             }
             else
             {
-                return new DefaultResult<PageResult<ClienteModel>>(null, false, "Não possui registros");
+                return new DefaultResult<PageResult<ClienteModel>>(null, HttpStatusCode.NotFound, "Não possui registros");
             }
         }
 
@@ -123,23 +138,23 @@ namespace Domain.Services
                     var totalPedidos = _pedidoRepository.ClienteTotalPedidos(id);
                     if (totalPedidos > 0)
                     {
-                        return new DefaultResult<bool>(false, false, "Cliente possui pedidos. Não é possível realizar a exclusão.");
+                        return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Cliente possui pedidos. Não é possível realizar a exclusão.");
                     }
 
                     //excluir
                     await _clienteRepository.DeleteAsync(entity);
 
-                    return new DefaultResult<bool>(true, true);
+                    return new DefaultResult<bool>(true, HttpStatusCode.OK);
                 }
                 else
                 {
-                    return new DefaultResult<bool>(false, false, "Cliente não encontrado");
+                    return new DefaultResult<bool>(false, HttpStatusCode.BadRequest, "Cliente não encontrado");
                 }
 
             }
             catch (Exception ex)
             {
-                return new DefaultResult<bool>(false, false, ex.Message);
+                return new DefaultResult<bool>(false, HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }
