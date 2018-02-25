@@ -12,10 +12,12 @@ namespace Domain.Services
     internal class PedidoService : IPedidoService
     {
         private readonly PedidoRepository _pedidoRepository;
+        private readonly ProdutoRepository _produtoRepository;
 
-        public PedidoService(PedidoRepository pedidoRepository)
+        public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository)
         {
             _pedidoRepository = pedidoRepository;
+            _produtoRepository = produtoRepository;
         }
 
         public async Task<DefaultResult<PedidoModel>> Get(Guid id)
@@ -46,10 +48,13 @@ namespace Domain.Services
 
                 //salvar
                 var entity = new PedidoEntity(codigo, model.ClienteId, model.ValorTotal);
+
                 foreach (var prodId in model.ProdutosId)
                 {
-                    entity.AddProduto(prodId);
+                    var prod =  await _produtoRepository.GetByIdAsync(prodId);
+                    entity.AddProduto(prod);
                 }
+
                 await _pedidoRepository.InsertAsync(entity);
 
                 return new DefaultResult<bool>(true, HttpStatusCode.Created);
@@ -60,12 +65,12 @@ namespace Domain.Services
             }
         }
 
-        public DefaultResult<PageResult<PedidoModel>> Listar(int pagina, int porpagina, string codigo = "")
+        public DefaultResult<PageResult<PedidoModel>> Listar(int pagina, int porpagina, string codigo = "", string cliente = "", string dataInicial = "", string dataFinal = "")
         {
             var total = _pedidoRepository.TotalRegistros(codigo);
             if (total > 0)
             {
-                var result = _pedidoRepository.Lista(porpagina, (porpagina * pagina - porpagina), codigo);
+                var result = _pedidoRepository.Lista(porpagina, (porpagina * pagina - porpagina), codigo, cliente, dataInicial, dataFinal);
                 return new DefaultResult<PageResult<PedidoModel>>(new PageResult<PedidoModel>(result.Select(PedidoModel.FromEntity).ToList(), total, pagina), HttpStatusCode.OK);
             }
             else

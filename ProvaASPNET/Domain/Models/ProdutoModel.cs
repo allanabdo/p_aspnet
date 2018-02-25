@@ -9,11 +9,11 @@ namespace Domain.Models
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Código é obrigatório")]
-        [MaxLength(30, ErrorMessage = "Tamanho máximo de 30 caracteres")]
+        [MaxLength(30, ErrorMessage = "Código tem tamanho máximo de 30 caracteres")]
         public string Codigo { get; set; }
 
         [Required(ErrorMessage = "Código de barras é obrigatório")]
-        [MaxLength(30, ErrorMessage = "Tamanho máximo de 15 caracteres")]
+        [MaxLength(15, ErrorMessage = "Código de barras tem tamanho máximo de 15 caracteres")]
         public string CodigoBarra { get; set; }
 
         [Required(ErrorMessage = "Descrição é obrigatório")]

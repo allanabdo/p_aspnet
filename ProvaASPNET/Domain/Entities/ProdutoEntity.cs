@@ -31,10 +31,5 @@ namespace Domain.Entities
             ValorVenda = valorVenda;
         }
 
-        public void SetId(Guid id)
-        {
-            Id = id;
-        }
-
     }
 }

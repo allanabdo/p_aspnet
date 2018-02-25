@@ -55,14 +55,14 @@ namespace Site.Controllers.API
 
         [HttpGet]
         [Route("lista")]
-        public IHttpActionResult Lista([FromUri] int pagina = 1, int porpagina = 20, string codigo = "")
+        public IHttpActionResult Lista([FromUri] int pagina = 1, int porpagina = 20, string codigo = "", string cliente = "", string dataInicial = "", string dataFinal = "")
         {
             if (porpagina > 200)
             {
                 porpagina = 20;
             }
 
-            var result = _pedidoService.Listar(pagina, porpagina, codigo);
+            var result = _pedidoService.Listar(pagina, porpagina, codigo, cliente, dataInicial, dataFinal);
             if (result.Status == HttpStatusCode.OK)
             {
                 return Ok(result.Dados);

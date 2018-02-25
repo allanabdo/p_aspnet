@@ -25,3 +25,44 @@
         margin: 0;
         color: #737171;
     }
+
+
+.resultitens {
+    background: #f1f1f1;
+    border-radius: 7px;
+    padding: 20px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+
+    .resultitens div {
+        margin: 0;
+        line-height: 19px;
+    }
+
+        .resultitens div span {
+            list-style: none;
+            display: -webkit-inline-box;
+            display: inline-block;
+            cursor: pointer;
+            color: #000;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 17px;
+            background: #ccc;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+
+    .resultitens ul li:hover {
+        color: #00bfff;
+    }
+
+@media(max-width: 768px) {
+    .resultitens div span {
+        width: 100%;
+    }
+}

@@ -195,6 +195,7 @@
     <Compile Include="Controllers\API\ClienteController.cs" />
     <Compile Include="Controllers\API\PedidoController.cs" />
     <Compile Include="Controllers\API\ProdutoController.cs" />
+    <Compile Include="Controllers\PedidoController.cs" />
     <Compile Include="Controllers\ProdutoController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -211,7 +212,12 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\js\app.js" />
+    <Content Include="Content\js\clienteController.js" />
     <Content Include="Content\js\controllers.js" />
+    <Content Include="Content\js\pedidoController.js" />
+    <Content Include="Content\js\produtoController.js" />
+    <Content Include="Content\js\quaggajs\quaggajs.css" />
+    <Content Include="Content\js\quaggajs\QuaggajsConfig.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\angular-animate.js" />
@@ -1027,6 +1033,7 @@
     <Content Include="Scripts\linq.js" />
     <Content Include="Scripts\linq.min.js" />
     <Content Include="Scripts\linq.qunit.js" />
+    <Content Include="Scripts\quaggajs\quagga.min.js" />
     <Content Include="Scripts\toastmessage\js\jquery.toastmessage.js" />
     <Content Include="Scripts\toastmessage\rsc\css\jquery.toastmessage.css" />
     <Content Include="Scripts\toastmessage\rsc\images\close.gif" />
@@ -1081,6 +1088,8 @@
     <Content Include="Views\Produto\Alterar.cshtml" />
     <Content Include="Views\Produto\Cadastrar.cshtml" />
     <Content Include="Views\Produto\Index.cshtml" />
+    <Content Include="Views\Pedido\Cadastrar.cshtml" />
+    <Content Include="Views\Pedido\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

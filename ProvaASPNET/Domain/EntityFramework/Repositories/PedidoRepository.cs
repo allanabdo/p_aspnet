@@ -32,7 +32,7 @@ namespace Domain.EntityFramework.Repositories
         }
 
 
-        public List<PedidoEntity> Lista(int limite, int offset, string codigo)
+        public List<PedidoEntity> Lista(int limite, int offset, string codigo, string cliente, string dataInicial, string dataFinal)
         {
 
             var query = AsQueryable;
@@ -41,6 +41,19 @@ namespace Domain.EntityFramework.Repositories
             if (!string.IsNullOrEmpty(codigo))
             {
                 query = query.Where(x => x.Codigo.Contains(codigo));
+            }
+
+            if (!string.IsNullOrEmpty(cliente))
+            {
+                query = query.Where(x => x.Cliente.Nome.Contains(cliente));
+            }
+
+            if (!string.IsNullOrEmpty(dataInicial) && !string.IsNullOrEmpty(dataFinal))
+            {
+                if (DateTime.TryParse(dataInicial, out var dataI) && DateTime.TryParse(dataFinal, out var dataF))
+                {
+                    query = query.Where(x => x.DataPedido >= dataI && x.DataPedido <= dataF);
+                }
             }
 
             query = query.OrderByDescending(x => x.DataPedido).Skip(offset).Take(limite);

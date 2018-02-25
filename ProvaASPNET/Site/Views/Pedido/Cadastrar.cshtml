@@ -1,0 +1,215 @@
+﻿@{
+    Layout = null;
+}
+
+
+<div ng-controller="pedidoController" class="margin-top-40">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div ng-hide="ClienteEscolhidoId != ''">
+                    <h4>Escolha um cliente</h4>
+                    <input class="form-control" ng-model="NomeClientePesquisa" placeholder="pesquise pelo nome" ng-change="PesquisaCliente()" />
+                    <div class="resultitens">
+                        <p>Clientes encontrados</p>
+                        <div ng-init="PesquisaCliente()">
+                            <span ng-repeat="cliente in ListaClientes" ng-click="EscolherCliente(cliente.Id, cliente.Nome)">{{cliente.Nome}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="ClienteEscolhidoId != ''">
+                    <div class="resultitens">
+                        <b>Cliente: </b> {{ClienteEscolhidoNome}} - <a href="/#!/pedidos/cadastrar" ng-click="EscolherOutroCliente()">Escolher outro</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row margin-top-20">
+            <div class="col">
+                <h4>Escolha os produtos</h4>
+                <div>
+                    <input class="form-control" ng-model="CodigoProduto" placeholder="pesquise pelo código" ng-change="PesquisarProduto()" />
+                    <div class="input-group  margin-top-20 d-sm-none">
+                        <input id="scanner_input" class="form-control" type="text" placeholder="pesquise pelo codigo de barras" ng-model="CodigoBarrasSearch" ng-change="BuscarPeloCodigoBarras()" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default " type="button" data-toggle="modal" data-target="#screen_bar">
+                                <i class="fa fa-barcode"></i>
+                            </button>
+                        </span>
+                    </div>
+
+                    <div class="resultitens">
+                        <p>Produtos encontrados</p>
+                        <div ng-init="PesquisarProduto()">
+                            <span ng-repeat="produto in ListaProdutos" ng-click="EscolherProduto(produto.Id, produto.Codigo, produto.ValorVenda)">{{produto.Codigo}} - R$ {{produto.ValorVenda}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-top-20">
+            <div class="col-12 col-lg-6">
+                <div class="resultitens">
+                    <h2>Carrinho</h2>
+                    <table class="table table-responsive-lg" ng-if="ProdutosCarrinho.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Valor</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in ProdutosCarrinho">
+                                <td>{{item.Codigo}}</td>
+                                <td> R$ {{item.ValorVenda}}</td>
+                                <td><a ng-click="RemoverProdCarrinho(item.Id, item.ValorVenda)"><i class="fas fa-trash-alt"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div ng-if="ProdutosCarrinho.length == 0">
+                        <p>Seu carrinho está vazio</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12  col-lg-6">
+                <div class="float-right">
+                    <h2> Valor Total: {{ValorTotal}}</h2>
+                    <div ng-if="ValorTotal > 0 && ClienteEscolhidoId != '' && ProdutosCarrinho.length > 0">
+                        <button class="btn btn-lg btn-primary" ng-click="Cadastrar()">FINALIZAR PEDIDO</button>
+                    </div>
+                    <div ng-if="ValorTotal == 0 || ClienteEscolhidoId == '' || ProdutosCarrinho.length == 0">
+                        <button class="btn btn-lg btn-primary" disabled="disabled">FINALIZAR PEDIDO</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="input-group">
+
+        </div>
+    </div>
+</div>
+<div class="modal" id="screen_bar">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="position: static">
+                <div id="interactive" class="viewport"></div>
+                <div class="error"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.date').mask("00/00/0000");
+        $('.cpf').mask("000.000.000-00");
+
+    });
+    $(function () {
+
+        var liveStreamConfig = {
+            inputStream: {
+                type: "LiveStream",
+                constraints: {
+                    width: { min: 640 },
+                    height: { min: 480 },
+                    aspectRatio: { min: 1, max: 100 },
+                    facingMode: "environment"
+                }
+            },
+            locator: {
+                patchSize: "medium",
+                halfSample: true
+            },
+            numOfWorkers: (navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4),
+            decoder: {
+                "readers": [
+                    { "format": "ean_reader", "config": {} }
+                ]
+            },
+            locate: true
+        };
+
+        var fileConfig = $.extend(
+            {},
+            liveStreamConfig,
+            {
+                inputStream: {
+                    size: 800
+                }
+            }
+        );
+        //ABRIR MODAL
+        $('#screen_bar').on('shown.bs.modal', function (e) {
+            Quagga.init(
+                liveStreamConfig,
+                function (err) {
+                    if (err) {
+                        Quagga.stop();
+                        return;
+                    }
+                    Quagga.start();
+                }
+            );
+        });
+
+        //DESENHAR OS QUADRADOS NA BARRA
+        Quagga.onProcessed(function (result) {
+            var drawingCtx = Quagga.canvas.ctx.overlay,
+                drawingCanvas = Quagga.canvas.dom.overlay;
+
+            if (result) {
+                if (result.boxes) {
+                    drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                    result.boxes.filter(function (box) {
+                        return box !== result.box;
+                    }).forEach(function (box) {
+                        Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: "green", lineWidth: 2 });
+                    });
+                }
+
+                if (result.box) {
+                    Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: "#00F", lineWidth: 2 });
+                }
+
+                if (result.codeResult && result.codeResult.code) {
+                    Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
+                }
+            }
+        });
+
+        //AO DETECTAR ENVIAR PARA O INPUT
+        Quagga.onDetected(function (result) {
+            if (result.codeResult.code) {
+                $('#scanner_input').val(result.codeResult.code).trigger('change');
+                Quagga.stop();
+                setTimeout(function () { $('#screen_bar').modal('hide'); }, 1000);
+            }
+        });
+        //FECHAR O MODAL
+        $('#screen_bar').on('hide.bs.modal', function () {
+            if (Quagga) {
+                Quagga.stop();
+            }
+        });
+        $("#livestream_scanner input:file").on("change", function(e) {
+            if (e.target.files && e.target.files.length) {
+                Quagga.decodeSingle($.extend({}, fileConfig, {src: URL.createObjectURL(e.target.files[0])}), function(result) {alert(result.codeResult.code);});
+            }
+        });
+    });
+</script>

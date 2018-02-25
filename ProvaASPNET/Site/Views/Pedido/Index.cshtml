@@ -1,0 +1,82 @@
+﻿@{
+    Layout = null;
+}
+
+
+<div ng-controller="pedidoController" ng-init="InitList()">
+    <div class="titulo">
+        <div class="container">
+            <p>Ulitmos pedidos</p>
+        </div>
+    </div>
+    <div class="container margin-top-40">
+        <div class="pesquisa">
+            <div class="row">
+                <div class="col">
+                    <form>
+                        <div class="form-group">
+                            <label>Código</label>
+                            <input type="text" class="form-control" ng-model="PedidoPesquisa.Codigo" placeholder="Digite o código">
+                        </div>
+                        <div class="form-group">
+                            <label>Cliente</label>
+                            <input type="text" class="form-control" ng-model="PedidoPesquisa.Cliente" placeholder="Digite o nome do cliente">
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label>Data Inicial</label>
+                                    <input type="text" class="form-control date" ng-model="PedidoPesquisa.DataInicial" placeholder="Digite a data inicial">
+                                </div>
+                                <div class="col-6">
+                                    <label>Data Final</label>
+                                    <input type="text" class="form-control date" ng-model="PedidoPesquisa.DataFinal" placeholder="Digite a data final">
+                                </div>
+                            </div>
+                         
+                        </div>
+                        <button class="btn float-right" ng-click="Pesquisar()">Pesquisar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row margin-top-20">
+            <div class="col"><a class="novo_registro" href="#!/pedidos/cadastrar"><i class="fas fa-plus-square"></i> Adicionar novo pedido</a></div>
+        </div>
+        <table class="table table-responsive-xl margin-top-20">
+            <thead>
+            <tr>
+                <th>Código</th>
+                <th>Cliente</th>
+                <th>Valor Total</th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+                <tr ng-repeat="item in Lista">
+                    <td>{{item.Codigo}}</td>
+                    <td>{{item.Cliente.Nome}}</td>
+                    <td>{{item.ValorTotal}}</td>
+   
+                </tr>
+            </tbody>
+        </table>
+
+
+        <nav>
+            <ul class="pagination">
+                <li class="page-item" ng-repeat="number in TotalPaginas">
+                    <a class="page-link" href="#!/pedidos/?pagina={{number}}">{{number}}</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.date').mask("00/00/0000");
+    });
+</script>

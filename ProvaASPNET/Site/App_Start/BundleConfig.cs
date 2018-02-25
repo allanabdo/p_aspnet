@@ -31,13 +31,21 @@ namespace Site
                 "~/Scripts/linq.min.js",
                 "~/Scripts/moment.min.js",
                 "~/Scripts/jquery.mask.js",
+                "~/Scripts/quaggajs/quagga.min.js",
+                "~/Content/js/quaggajs/QuaggajsConfig.js",
                 "~/Content/js/app.js",
-                "~/Content/js/controllers.js"
+                "~/Content/js/controllers.js",
+                "~/Content/js/clienteController.js",
+                "~/Content/js/produtoController.js", 
+                "~/Content/js/pedidoController.js"
+
             ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Scripts/toastmessage/rsc/css/jquery.toastmessage.css",
+                      "~/bower_components/angular-ui-select/dist/select.min.css",
+                      "~/Content/js/quaggajs/quaggajs.css",
                       "~/Content/site.css"));
         }
     }

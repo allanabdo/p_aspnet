@@ -8,6 +8,6 @@ namespace Domain.Interfaces.Services
     {
         Task<DefaultResult<PedidoModel>> Get(Guid id);
         Task<DefaultResult<bool>> Cadastrar(PedidoModel model);
-        DefaultResult<PageResult<PedidoModel>> Listar(int pagina, int porpagina, string codigo = "");
+        DefaultResult<PageResult<PedidoModel>> Listar(int pagina, int porpagina, string codigo = "", string cliente = "", string dataInicial = "", string dataFinal = "");
     }
 }

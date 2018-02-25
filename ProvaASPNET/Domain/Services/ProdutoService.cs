@@ -30,7 +30,7 @@ namespace Domain.Services
                 var result = new DefaultResult<ProdutoModel>(ProdutoModel.FromEntity(entity), HttpStatusCode.OK);
                 return result;
             }
-            return new DefaultResult<ProdutoModel>(null, HttpStatusCode.NotFound); 
+            return new DefaultResult<ProdutoModel>(null, HttpStatusCode.NotFound);
 
 
         }
@@ -130,7 +130,14 @@ namespace Domain.Services
             try
             {
                 var entity = _produtoRepository.GetByCodigoBarras(codigoBarra);
-                return new DefaultResult<ProdutoModel>(ProdutoModel.FromEntity(entity), HttpStatusCode.OK);
+                if (entity != null)
+                {
+                    return new DefaultResult<ProdutoModel>(ProdutoModel.FromEntity(entity), HttpStatusCode.OK);
+                }
+                else
+                {
+                    return new DefaultResult<ProdutoModel>(null, HttpStatusCode.NotFound, "Produto não encontrado");
+                }
             }
             catch (Exception ex)
             {

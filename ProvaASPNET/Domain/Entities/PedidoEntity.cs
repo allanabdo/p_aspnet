@@ -28,10 +28,9 @@ namespace Domain.Entities
             ValorTotal = valorTotal;
         }
 
-        public void AddProduto(Guid id)
+        public void AddProduto(ProdutoEntity produto)
         {
-            var produto = new ProdutoEntity();
-            produto.SetId(id);
+          
             Produtos.Add(produto);
         }
 

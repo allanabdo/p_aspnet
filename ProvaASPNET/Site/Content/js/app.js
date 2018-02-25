@@ -1,5 +1,5 @@
 ﻿var app = angular.module('siteApp', ['ngRoute']);
-
+api_url = "http://localhost:58439/api";
 
 // configure our routes
 app.config(function ($routeProvider) {
@@ -25,5 +25,12 @@ app.config(function ($routeProvider) {
         }).when('/produtos/alterar/:id',
         {
             templateUrl: 'Produto/Alterar'
-        });
+        }).when('/pedidos',
+            {
+                templateUrl: 'Pedido/Index'
+        })
+        .when('/pedidos/cadastrar',
+            {
+                templateUrl: 'Pedido/Cadastrar'
+            });
 });

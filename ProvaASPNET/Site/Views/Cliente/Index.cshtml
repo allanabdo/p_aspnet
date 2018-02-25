@@ -25,7 +25,7 @@
                         </div>
                         <div class="form-group">
                             <label>CPF</label>
-                            <input type="text" class="form-control" ng-model="ClientePesquisa.Cpf" placeholder="Digite o cpf">
+                            <input type="text" class="form-control cpf" ng-model="ClientePesquisa.Cpf" placeholder="Digite o cpf">
                         </div>
                         <button class="btn float-right" ng-click="Pesquisar()">Pesquisar</button>
                     </form>
@@ -59,5 +59,17 @@
                 </tr>
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination">
+                <li class="page-item" ng-repeat="number in TotalPaginas">
+                    <a class="page-link" href="#!/produtos/?pagina={{number}}">{{number}}</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('.cpf').mask("000.000.000-00");
+    });
+</script>
